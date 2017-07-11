@@ -43,7 +43,7 @@ $(function () {
 
 <div class="compute">
 <script type="text/x-sage">
-
+# Import tools and set create variables
 from sage.plot.plot3d.shapes import *
 var('theta phi')
 
@@ -58,20 +58,26 @@ def SVD_viewer( a11 = input_box( default = 1, label = "matrix A", width = 5),
         a32 = input_box( default = 1, label = "", width = 5), 
         a33 = input_box( default = 2, label = "", width = 5),
         show_together = False ):
+            
+    # Set up A, calculated the SVD, and assign U, D, and V
     A = matrix(RDF, [[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]])
     svd = A.SVD()
     U = svd[0]
     D = svd[1]
     V = svd[2]
 
+    # Set up the unit sphere and the transformed figure
     S = Sphere(1, opacity=.5)
     T = parametric_plot3d(A*vector((sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta))),
         (theta,0,2*pi),(phi,0,pi),opacity=.5)
+        
+    # Add vectors to the plots of S and T
     arrowCols = ['red','green','blue']
     for j in range(3):
         S += arrow3d((0,0,0), V.H[j], color=arrowCols[j])
         T += arrow3d((0,0,0), D[j,j]*U.H[j], color=arrowCols[j])
     
+    # If requested to show together, graph together. Otherwise display separate plots
     if show_together:
         graph = S + T
         graph.show()
